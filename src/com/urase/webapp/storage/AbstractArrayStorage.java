@@ -1,5 +1,8 @@
 package com.urase.webapp.storage;
 
+import com.urase.webapp.exception.ExistStorageException;
+import com.urase.webapp.exception.NotExistStorageException;
+import com.urase.webapp.exception.StorageException;
 import com.urase.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -22,7 +25,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public void update(Resume r) {
         int index = getIndex(r.getUuid());
         if (index < 0) {
-            System.out.println("Резюме " + r.getUuid() + " не найдено.");
+            throw new NotExistStorageException(r.getUuid());
         } else {
             storage[index] = r;
         }
@@ -34,10 +37,10 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public void save(Resume r) {
         int index = getIndex(r.getUuid());
-        if (index >= 0) {
-            System.out.println("Резюме " + r.getUuid() + " уже существует.");
+        if (index > 0) {
+            throw new ExistStorageException(r.getUuid());
         } else if (size == STORAGE_LIMIT) {
-            System.out.println("База резюме заполнена.");
+            throw new StorageException("База резюме заполнена.", r.getUuid());
         } else {
             insertElement(r, index);
             size++;
@@ -47,7 +50,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("Резюме " + uuid + " не найдено.");
+            throw new NotExistStorageException(uuid);
         } else {
             fillDeletedElement(index);
             storage[size - 1] = null;
@@ -58,8 +61,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("Резюме " + uuid + " не найдено.");
-            return null;
+            throw new NotExistStorageException(uuid);
         }
         return storage[index];
     }
