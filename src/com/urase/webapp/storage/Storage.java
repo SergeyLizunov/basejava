@@ -3,6 +3,7 @@ package com.urase.webapp.storage;
 import com.urase.webapp.model.Resume;
 
 public interface Storage {
+
     void clear();
 
     void update(Resume r);
