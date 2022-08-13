@@ -65,6 +65,10 @@ public class MainConcurrency {
                 return 5;
             });
         }
+
+        latch.await(10, TimeUnit.SECONDS);
+        executorService.shutdown();
+        System.out.println(mainConcurrency.atomicCounter.get());
     }
 
     private static void deadLock(Object lock1, Object lock2) {
