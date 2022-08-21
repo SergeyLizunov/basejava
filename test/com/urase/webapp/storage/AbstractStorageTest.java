@@ -3,6 +3,7 @@ package com.urase.webapp.storage;
 import com.urase.webapp.Config;
 import com.urase.webapp.exception.ExistStorageException;
 import com.urase.webapp.exception.NotExistStorageException;
+import com.urase.webapp.model.ContactType;
 import com.urase.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +12,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
+import static com.urase.webapp.TestData.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -21,22 +22,6 @@ public abstract class AbstractStorageTest {
 
     protected Storage storage;
 
-    private static final String UUID_1 = UUID.randomUUID().toString();
-    private static final String UUID_2 = UUID.randomUUID().toString();
-    private static final String UUID_3 = UUID.randomUUID().toString();
-    private static final String UUID_4 = UUID.randomUUID().toString();
-
-    private static final Resume R1;
-    private static final Resume R2;
-    private static final Resume R3;
-    private static final Resume R4;
-
-    static {
-        R1 = new Resume(UUID_1, "Name1");
-        R2 = new Resume(UUID_2, "Name2");
-        R3 = new Resume(UUID_3, "Name3");
-        R4 = new Resume(UUID_4, "Name4");
-    }
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -64,6 +49,9 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() throws Exception {
         Resume newResume = new Resume(UUID_1, "New Name");
+        newResume.addContact(ContactType.MAIL, "mail1@google.com");
+        newResume.addContact(ContactType.SKYPE, "NewSkype");
+        newResume.addContact(ContactType.MOBILE, "+7 921 222-22-22");
         storage.update(newResume);
         assertTrue(newResume.equals(storage.get(UUID_1)));
     }
@@ -79,7 +67,7 @@ public abstract class AbstractStorageTest {
         assertEquals(3, list.size());
         List<Resume> sortedResumes = Arrays.asList(R1, R2, R3);
         Collections.sort(sortedResumes);
-        assertEquals(list, sortedResumes);
+        assertEquals(sortedResumes, list);
     }
 
     @Test
